@@ -4,17 +4,17 @@ import pandas as pd
 import numpy as np
 
 '''
-# The Fantasy Football Predictor ⚽️
+# The Fantasy Football Predictor ⚽️🏆
 '''
 st.markdown('___')
 
 st.markdown('''
-## First... Input your players name :
+## 1. Input your players name :
 ''')
 
 st.markdown('___')
 
-st.subheader('Forwards *e.g.Harry Kane*')
+st.subheader('Forwards *e.g. Harry Kane*')
 
 fwd_1 = st.text_input('Forward 1')
 fwd_2 = st.text_input('Forward 2')
@@ -50,35 +50,18 @@ gk_2= st.text_input('Goalkeeper 2')
 st.markdown('___')
 
 st.markdown('''
-## 2. Then... Input your budget :
+## 2. Input your budget :
 ''')
 
-st.markdown('___')
+#st.markdown('___')
 
-budget = st.number_input('Actual budget')
+budget = st.number_input('')
 
 st.markdown('___')
 
 st.markdown('''
 ## Finally... 
 ''')
-
-if st.button('Start the Predictions'):
-    import time
-    'AI computed predictions in progress...'
-
-    # Add a placeholder
-    latest_iteration = st.empty()
-    bar = st.progress(0)
-
-    for i in range(100):
-        # Update the progress bar with each iteration.
-        latest_iteration.text(f'{i+1}%')
-        bar.progress(i + 1)
-        time.sleep(0.1)
-        
-    '...tadaaa! 🏆'
-#        st.success(f'Prediction: {x}')
 
 # url = ''
 params = pd.DataFrame({
@@ -91,5 +74,63 @@ params = pd.DataFrame({
                         'def', 'def', 'def', 'def', 'def', 
                         'gk', 'gk')
         })
-# response = requests.get(url, params).json()
-# player_predicted = response['x']
+
+if st.button('Start the Predictions'):
+    import time
+    
+    'AI computed predictions in progress...'
+    
+    # response = requests.get(url, params).json()
+
+    # Add a placeholder
+    latest_iteration = st.empty()
+    bar = st.progress(0)
+
+    for i in range(100):
+        # Update the progress bar with each iteration.
+        latest_iteration.text(f'{i+1}%')
+        bar.progress(i + 1)
+        time.sleep(0.1)
+        
+    '...Tadaaa! Here are our predictions:'
+    
+    # top_transfer_1 = response['']
+    # top_transfer_2 = response['']    
+    # top_transfer_3 = response['']  
+    
+    # sugg_player_1 = response['']
+    # sugg_player_2 = response['']
+    # sugg_player_3 = response['']
+    # sugg_player_4 = response['']
+    # sugg_player_5 = response['']
+    # sugg_player_6 = response['']
+    # sugg_player_7 = response['']
+    # sugg_player_8 = response['']
+    # sugg_player_9 = response['']
+    # sugg_player_10 = response['']
+    # sugg_player_11 = response['']
+    
+    # bench_player_1 = response['']
+    # bench_player_2 = response['']
+    # bench_player_3 = response['']
+
+    # sugg_captain = response['']
+    # sugg_vice_captain = response['']
+
+
+    ## st.success(f'Prediction: {x}')
+    
+    #st.write(f'The players to transfer for this Gameweek: 
+    #         {top_transfer_1}, {top_transfer_2}, {top_transfer_3}')
+    
+    #st.write(f'Suggestion of the 11 starting players: 
+    #         {sugg_player_1}, {sugg_player_2}, {sugg_player_3}, {sugg_player_4},
+    #         {sugg_player_5}, {sugg_player_6}, {sugg_player_7}, {sugg_player_8}, 
+    #         {sugg_player_9}, {sugg_player_10}, {sugg_player_11}')
+    
+    #st.write(f'Suggestion of a Captain and Vice-Captain:
+    #         {sugg_captain} & {sugg_vice_captain}')
+    
+    #st.write(f'Suggestion of the 4 bench players:
+    #         {bench_player_1}, {bench_player_2}, {bench_player_3}')
+    

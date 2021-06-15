@@ -51,10 +51,11 @@ def print_formation(best_11):
     ax.imshow(pitch, extent=[0, 310, 0, 400])
 
     for _, row in best_11.iterrows():
-        ax.text(row['x'] - 10,
-                row['y'] - 10,
+        ax.text(row['x'],
+                row['y'],
                 row['name'].replace(' ', '\n').capitalize(),
-                size=6)
+                size=6,
+                ha = 'center')
         """
         player_url = get_picture(row['name'])
         st.write(player_url)

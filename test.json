@@ -1,0 +1,63 @@
+{
+    "best_11": {
+      "name": {
+        "29": "dominic calvert-lewin",
+        "39": "harry kane",
+        "66": "michail antonio",
+        "200": "jack harrison",
+        "226": "jesse lingard",
+        "313": "paul pogba",
+        "320": "raphael dias belloli",
+        "379": "aaron cresswell",
+        "407": "benjamin chilwell",
+        "551": "nathaniel phillips",
+        "646": "edouard mendy"
+      },
+      "position": {
+        "29": "FWD",
+        "39": "FWD",
+        "66": "FWD",
+        "200": "MID",
+        "226": "MID",
+        "313": "MID",
+        "320": "MID",
+        "379": "DEF",
+        "407": "DEF",
+        "551": "DEF",
+        "646": "GK"
+      }
+    },
+    "subs_4": {
+      "name": {
+        "250": "kevin de bruyne",
+        "495": "john stones",
+        "613": "victor lindelöf",
+        "655": "illan meslier"
+      },
+      "position": {
+        "250": "MID",
+        "495": "DEF",
+        "613": "DEF",
+        "655": "GK"
+      }
+    },
+    "captain": "dominic calvert-lewin",
+    "vice_captain": "michail antonio",
+    "best_transfers": {
+      "leaving_player": {
+        "0": "illan meslier",
+        "1": "kevin de bruyne",
+        "2": "edouard mendy"
+      },
+      "incoming_player": {
+        "0": "vicente guaita",
+        "1": "mohamed salah",
+        "2": "vicente guaita"
+      },
+      "points_difference": {
+        "0": 5.4,
+        "1": 5.206230572269324,
+        "2": 4
+      }
+    }
+  }

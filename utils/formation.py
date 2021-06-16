@@ -16,13 +16,12 @@ from utils.player_pictures import get_picture
 def getImage(path):
     response = requests.get(path, stream=True)
     print(response.status_code)
-    # fpipile.write(response.content)
-    # plt.imshow(response.content)
-    #plt.imshow(Image.open(BytesIO(response.content)))
 
     return OffsetImage(Image.open(BytesIO(response.content)), zoom = 0.6)
 
+
 def print_formation(best_11):
+
     left_limit = 25
     right_limit = 285
 
@@ -50,7 +49,7 @@ def print_formation(best_11):
                 best_11.loc[index, ['x']] = position_x[player]
                 player += 1
         else:
-            index = best_11[best_11['position']].index
+            index = best_11[best_11['position'] == position].index
             best_11.loc[index,['x']] = 155
 
     pitch = plt.imread('images/football_pitch.png')
@@ -75,7 +74,7 @@ def print_formation(best_11):
             ax.add_artist(ab)
         else:
             image = OffsetImage(Image.open('images/default_avatar.png'),
-                                zoom=0.06)
+                                zoom=0.05)
             ab = AnnotationBbox(image,(row['x'], row['y']),frameon=False,)
             ax.add_artist(ab)
 

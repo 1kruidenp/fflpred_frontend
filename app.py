@@ -4,108 +4,131 @@ import json
 import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup
+from PIL import Image
+from io import BytesIO
 
+
+from utils.formation import print_formation, getImage
+from utils.player_pictures import get_picture
+
+TEST_LIST = ['Vicente Guaita', 'Karl Darlow',
+             'Timothy Castagne', 'Gabriel Magalhães', 'Romain Saïss', 'Reece James', 'James Justin',
+             'Wilfried Zaha', 'Heung-Min Son', 'Mateusz Klich', 'Andros Townsend', 'Hélder Wander Sousa de Azevedo e Costa',
+             'Patrick Bamford', 'Dominic Calvert-Lewin', 'Harry Kane']
+NEWLINE = '\n'
+
+
+
+logo = Image.open('images/DEEP_COACH.png')
+st.image(logo, use_column_width=False, width=300)
 
 '''
 # The Fantasy Football Predictor ⚽️🏆
 '''
 st.markdown('___')
 
+
 st.markdown('''
-## Input your players name :
+## Input your team:
 ''')
-
 st.markdown('___')
 
-#with st.form(key='my_form'):
+with st.beta_expander('Input:',expanded=True):
 
-# FWD
-st.subheader('Select 3 forwards *e.g. Harry Kane*')
 
-url_positions = 'https://fflpred-d2yuhgnxba-ew.a.run.app/players'
-response_positions= requests.get(url_positions).json()
-options_forward = ("", *[n.title() for n in response_positions['FWD']])
+    #with st.form(key='my_form'):
 
-fwd_1 = st.multiselect('', options_forward, key="1")
+    # FWD
+    st.subheader('Select 3 forwards *e.g. Harry Kane*')
 
-if len(fwd_1) != 0:
-  if len(fwd_1) == 3:
-      st.success('3 players selected')
-  elif len(fwd_1) > 3:
-      st.warning('Please choose 3 players')
-  elif len(fwd_1) < 3:
-      st.warning(f"Selected {len(fwd_1)}/3 players")
+    url_positions = 'https://fflpred-d2yuhgnxba-ew.a.run.app/players'
+    response_positions= requests.get(url_positions).json()
+    options_forward = ("", *[n.title() for n in response_positions['FWD']])
 
-# MID
-st.subheader('Select 5 midfielders *e.g. Kevin de Bruyne*')
-options_midfielders = ("", *[n.title() for n in response_positions['MID']])
+    forwards = st.multiselect('', options_forward, key="1")
 
-mid_1 = st.multiselect('', options_midfielders, key="2")
+    if len(forwards) != 0:
+        if len(forwards) == 3:
+            st.success('3 players selected')
+        elif len(forwards) > 3:
+            st.warning('Please choose 3 players')
+        elif len(forwards) < 3:
+            st.warning(f"Selected {len(forwards)}/3 players")
 
-if len(mid_1) != 0:
-  if len(mid_1) == 5:
-      st.success('5 players selected')
-  elif len(mid_1) > 5:
-      st.warning('Please choose 5 players')
-  elif len(mid_1) < 5:
-      st.warning(f"Selected {len(mid_1)}/5 players")
+    # MID
+    st.subheader('Select 5 midfielders *e.g. Kevin de Bruyne*')
+    options_midfielders = ("", *[n.title() for n in response_positions['MID']])
 
-# DEF
-st.subheader('Select 5 defenders *e.g. John Stones*')
-options_defenders = ("", *[n.title() for n in response_positions['DEF']])
+    midfielders = st.multiselect('', options_midfielders, key="2")
 
-def_1 = st.multiselect('', options_defenders, key="3")
+    if len(midfielders) != 0:
+        if len(midfielders) == 5:
+            st.success('5 players selected')
+        elif len(midfielders) > 5:
+            st.warning('Please choose 5 players')
+        elif len(midfielders) < 5:
+            st.warning(f"Selected {len(midfielders)}/5 players")
 
-if len(def_1) != 0:
-  if len(def_1) == 5:
-      st.success('5 players selected')
-  elif len(def_1) > 5:
-      st.warning('Please choose 5 players')
-  elif len(def_1) < 5:
-      st.warning(f"Selected {len(def_1)}/5 players")
+    # DEF
+    st.subheader('Select 5 defenders *e.g. John Stones*')
+    options_defenders = ("", *[n.title() for n in response_positions['DEF']])
 
-# GK
-st.subheader('Select 2 goalkeepers *e.g. Hugo Lloris*')
-options_goalkeepers = ("", *[n.title() for n in response_positions['GK']])
+    defenders = st.multiselect('', options_defenders, key="3")
 
-gk_1= st.multiselect('', options_goalkeepers, key="4")
+    if len(defenders) != 0:
+        if len(defenders) == 5:
+            st.success('5 players selected')
+        elif len(defenders) > 5:
+            st.warning('Please choose 5 players')
+        elif len(defenders) < 5:
+            st.warning(f"Selected {len(defenders)}/5 players")
 
-if len(gk_1) != 0:
-  if len(gk_1) == 3:
-      st.success('2 players selected')
-  elif len(gk_1) > 2:
-      st.warning('Please choose 2 players')
-  elif len(gk_1) < 2:
-      st.warning(f"Selected {len(gk_1)}/2 players")
+    # GK
+    st.subheader('Select 2 goalkeepers *e.g. Hugo Lloris*')
+    options_goalkeepers = ("", *[n.title() for n in response_positions['GK']])
 
-# List of players for API params
-full_list = fwd_1 + mid_1 + def_1 + gk_1
+    goalkeepers= st.multiselect('', options_goalkeepers, key="4")
+
+    if len(goalkeepers) != 0:
+        if len(goalkeepers) == 2:
+            st.success('2 players selected')
+        elif len(goalkeepers) > 2:
+            st.warning('Please choose 2 players')
+        elif len(goalkeepers) < 2:
+            st.warning(f"Selected {len(goalkeepers)}/2 players")
+
+    # List of players for API params
+    full_list = forwards + midfielders + defenders + goalkeepers
+
+    st.markdown('___')
+
+    st.markdown('''
+    ## Input your budget :
+    ''')
+
+    budget = st.number_input('')
 
 st.markdown('___')
 
 st.markdown('''
-## Input your budget :
-''')
-
-budget = st.number_input('')
-
-st.markdown('___')
-
-st.markdown('''
-## Finally... 
+## Finally...
 ''')
 
 full_list = [n.lower() for n in full_list]
+
+if st.checkbox('Use default team'):
+    full_list = [n.lower() for n in TEST_LIST]
+
 params = {
     'team_list': full_list,
     'budget': float(budget)
     }
-  
+
 url = 'https://fflpred-d2yuhgnxba-ew.a.run.app/give_prediction'
-     
+
 # Button to predict
 
-if 	st.button('Start the Predictions'): #st.form_submit_button(label='Submit'):
+if  st.checkbox('Start the Predictions'): #st.form_submit_button(label='Submit'):
     import time
 
     'AI computed predictions in progress...'
@@ -123,101 +146,133 @@ if 	st.button('Start the Predictions'): #st.form_submit_button(label='Submit'):
         # Update the progress bar with each iteration.
         latest_iteration.text(f'{i+1}%')
         bar.progress(i + 1)
-        time.sleep(0.1)
-        
-    # Transfer players
-    top_transfer_players = list(response['best_transfers']['leaving_player'].values())
-    top_transfer_subs = list(response['best_transfers']['incoming_player'].values())
-    
-    top_transfer_1 = top_transfer_players[0].title()
-    top_transfer_2 = top_transfer_players[1].title()   
-    top_transfer_3 = top_transfer_players[2].title() 
+        time.sleep(0.01)
 
-    top_sub_1 = top_transfer_subs[0].title()
-    top_sub_2 = top_transfer_subs[1].title()   
-    top_sub_3 = top_transfer_subs[2].title()
-    
+    # Transfer players
+    best_transfers = pd.DataFrame(response['best_transfers'])
+    best_transfers.leaving_player = best_transfers.leaving_player.apply(lambda x: x.title())
+    best_transfers.incoming_player = best_transfers.incoming_player.apply(lambda x: x.title())
+
     # Suggested players
 
-    sugg_players = list(response['best_11']['name'].values())
-    sugg_players_position = list(response['best_11']['position'].values())
-    
-    #import ipdb; ipdb.set_trace()
+    best_11 = pd.DataFrame(
+        response['best_11']).reset_index(drop=True)[['position', 'name']]
+    # st.write(best_11)
 
-    sugg_player_1 = sugg_players[0].title()
-    sugg_player_1_p = sugg_players_position[0]
+    positions = pd.DataFrame({
+        'x': [155, 155, 155, 155, 25, 285],
+        'y': [40, 100, 190, 280, 200, 200],
+        'position': ['GK', 'DEF', 'MID', 'FWD', 'Left limit', 'right limit']
+    })
 
-    sugg_player_2 = sugg_players[1].title()
-    sugg_player_2_p = sugg_players_position[1]
-        
-    sugg_player_3 = sugg_players[2].title()
-    sugg_player_3_p = sugg_players_position[2]
+    #st.write(positions)
 
-    sugg_player_4 = sugg_players[3].title()
-    sugg_player_4_p = sugg_players_position[3]
-    
-    sugg_player_5 = sugg_players[4].title()
-    sugg_player_5_p = sugg_players_position[4]
+    fig = print_formation(best_11)
+    st.write(fig)
 
-    sugg_player_6 = sugg_players[5].title()
-    sugg_player_6_p = sugg_players_position[5]
+    # Captain and Vice Captain
 
-    sugg_player_7 = sugg_players[6].title()
-    sugg_player_7_p = sugg_players_position[6]
-
-    sugg_player_8 = sugg_players[7].title()
-    sugg_player_8_p = sugg_players_position[7]
-    
-    sugg_player_9 = sugg_players[8].title()
-    sugg_player_9_p = sugg_players_position[8]
-
-    sugg_player_10 = sugg_players[9].title()
-    sugg_player_10_p = sugg_players_position[9]
-    
-    sugg_player_11 = sugg_players[10].title()
-    sugg_player_11_p = sugg_players_position[10]
-    
-    # Captain and Vice Captain 
-
-    sugg_captain = response['captain'].title()
-    sugg_vice_captain = response['vice_captain'].title()
+    captain = response['captain'].title()
+    captain_image = Image.open(
+        BytesIO(
+            requests.get(get_picture(response['captain']),
+                         stream=True).content))
+    vice_captain = response['vice_captain'].title()
 
     # Bench players
-    
-    bench_players = list(response['subs_4']['name'].values())
-    bench_players_position = list(response['subs_4']['position'].values())
 
-    bench_player_1 = bench_players[0].title()
-    bench_player_1_p = bench_players_position[0]
-    
-    bench_player_2 = bench_players[1].title()
-    bench_player_2_p = bench_players_position[1]
-    
-    bench_player_3 = bench_players[2].title()
-    bench_player_3_p = bench_players_position[2]
-    
-    bench_player_4 = bench_players[3].title()
-    bench_player_4_p = bench_players_position[3]
+    subs_4 = pd.DataFrame(response['subs_4'])
+    subs_4['name'] = subs_4['name'].apply(lambda x: x.title())
+
+    #subs_4['url'] = subs_4['name'].apply(lambda x: get_picture(x))
+    #subs_4['image'] = subs_4['url'].apply(lambda x: Image.open(BytesIO(requests.get(x, stream=True).content)) if x != 'not found' else '')
 
     st.markdown('___')
 
-    st.write(f"""**Starting 11 :**   
-            *Forwards*: {sugg_player_1} ({sugg_player_1_p}), {sugg_player_2} ({sugg_player_2_p}) and {sugg_player_3} ({sugg_player_3_p})                                         
-            *Midfielders*: {sugg_player_4} ({sugg_player_4_p}), {sugg_player_5} ({sugg_player_5_p}), {sugg_player_6} ({sugg_player_6_p}) and {sugg_player_7} ({sugg_player_7_p})  
-            *Defenders*: {sugg_player_8} ({sugg_player_8_p}), {sugg_player_9} ({sugg_player_9_p}) and {sugg_player_10} ({sugg_player_10_p})                                     
-            *Goalkeeper*: {sugg_player_11} ({sugg_player_11_p})""")
-    
-    st.write(f"""**Bench players :**
-             {bench_player_1} ({bench_player_1_p}), 
-             {bench_player_2} ({bench_player_2_p}), 
-             {bench_player_3} ({bench_player_3_p})""")
-
-    st.write(f"""**Captain :** {sugg_captain}""")
-    
-    st.write(f"""**Vice-Captain :** {sugg_vice_captain}""")
-    
-    st.write(f"""**Transfers for this Gameweek :**                 
-             {top_transfer_1} ➣ {top_sub_1}         
-             {top_transfer_2} ➣ {top_sub_2}         
-             {top_transfer_3} ➣ {top_sub_3}
+    st.write(f"""**Bench players :**{NEWLINE}
+             {subs_4['name'][0]} ({subs_4['position'][0]}){NEWLINE}
+             {subs_4['name'][1]} ({subs_4['position'][1]}){NEWLINE}
+             {subs_4['name'][2]} ({subs_4['position'][2]}){NEWLINE}
+             {subs_4['name'][3]} ({subs_4['position'][3]})
              """)
+
+    #st.image(subs_4['image'][0])
+
+    st.write(f"""**Captain :**  {NEWLINE}
+             {captain}""")
+
+    st.write(f"""**Vice-Captain :**  {NEWLINE}
+             {vice_captain}""")
+
+    st.write(f"""**Transfers for this Gameweek :** {NEWLINE}
+             {best_transfers.leaving_player[0]} ➣ {best_transfers.incoming_player[0]}: +{int(best_transfers.points_difference[0])} points predicted {NEWLINE}
+             {best_transfers.leaving_player[1]} ➣ {best_transfers.incoming_player[1]}: +{int(best_transfers.points_difference[1])} points predicted {NEWLINE}
+             {best_transfers.leaving_player[2]} ➣ {best_transfers.incoming_player[2]}: +{int(best_transfers.points_difference[2])} points predicted
+             """)
+
+    selected_transfer = st.radio('Select a transfer:',
+                                 best_transfers['leaving_player'],
+                                 format_func=lambda x: 'Replace ' + x)
+
+    #st.write(selected_transfer)
+    new_player = best_transfers.incoming_player[best_transfers.leaving_player == selected_transfer].item().lower()
+    #st.write(new_player)
+
+    if  st.button('Rerun with transfer'):
+        full_list.remove(selected_transfer.lower())
+        full_list.append(new_player)
+
+        params = {'team_list': full_list, 'budget': float(budget)}
+
+        response = requests.post(url, json=params, headers=headers).json()
+
+        # Suggested players
+
+        best_11 = pd.DataFrame(
+            response['best_11']).reset_index(drop=True)[['position', 'name']]
+        # st.write(best_11)
+
+        positions = pd.DataFrame({
+            'x': [155, 155, 155, 155, 25, 285],
+            'y': [40, 100, 190, 280, 200, 200],
+            'position': ['GK', 'DEF', 'MID', 'FWD', 'Left limit', 'right limit']
+        })
+
+        #st.write(positions)
+
+        fig = print_formation(best_11)
+        st.write(fig)
+
+        # Captain and Vice Captain
+
+        captain = response['captain'].title()
+        captain_image = Image.open(
+            BytesIO(
+                requests.get(get_picture(response['captain']),
+                            stream=True).content))
+        vice_captain = response['vice_captain'].title()
+
+        # Bench players
+
+        subs_4 = pd.DataFrame(response['subs_4'])
+        subs_4['name'] = subs_4['name'].apply(lambda x: x.title())
+
+        #subs_4['url'] = subs_4['name'].apply(lambda x: get_picture(x))
+        #subs_4['image'] = subs_4['url'].apply(lambda x: Image.open(BytesIO(requests.get(x, stream=True).content)) if x != 'not found' else '')
+
+        st.markdown('___')
+
+        st.write(f"""**Bench players :**{NEWLINE}
+                {subs_4['name'][0]} ({subs_4['position'][0]}){NEWLINE}
+                {subs_4['name'][1]} ({subs_4['position'][1]}){NEWLINE}
+                {subs_4['name'][2]} ({subs_4['position'][2]}){NEWLINE}
+                {subs_4['name'][3]} ({subs_4['position'][3]})
+                """)
+
+        #st.image(subs_4['image'][0])
+
+        st.write(f"""**Captain :**  {NEWLINE}
+                {captain}""")
+
+        st.write(f"""**Vice-Captain :**  {NEWLINE}
+                {vice_captain}""")

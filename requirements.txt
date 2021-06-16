@@ -30,6 +30,5 @@ termcolor
 
 streamlit
 requests
-BeautifulSoup
 bs4
 json

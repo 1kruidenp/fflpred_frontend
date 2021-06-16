@@ -20,7 +20,7 @@ def getImage(path):
     # plt.imshow(response.content)
     #plt.imshow(Image.open(BytesIO(response.content)))
 
-    return OffsetImage(Image.open(BytesIO(response.content)), zoom = 0.2)
+    return OffsetImage(Image.open(BytesIO(response.content)), zoom = 0.6)
 
 def print_formation(best_11):
     left_limit = 25
@@ -64,7 +64,7 @@ def print_formation(best_11):
         ax.text(row['x'],
                 row['y']-50,
                 row['name'].replace(' ', '\n', 1).title(),
-                size=6,
+                size=5,
                 ha = 'center')
 
         player_url = get_picture(row['name'])

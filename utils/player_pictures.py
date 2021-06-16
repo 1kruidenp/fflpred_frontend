@@ -11,7 +11,7 @@ def get_picture(player_name):
     try:
         table = soup.select('.column.col-auto')[0]
         #img_url=table.img['data-srcset'].split(',')[-1][1:-3]
-        img_url = table.img['data-src'][0:-9] + '21_180.png'
+        img_url = table.img['data-src'][0:-9] + '21_60.png'
         image = img_url
     except Exception as e:
         print('Not found ... ')

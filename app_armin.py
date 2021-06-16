@@ -178,7 +178,7 @@ if st.button('Start the Predictions'):
         'position': ['GK', 'DEF', 'MID', 'FWD', 'Left limit', 'right limit']
     })
 
-    st.write(positions)
+    #st.write(positions)
 
     fig = print_formation(best_11)
     st.write(fig)

@@ -1,9 +1,6 @@
 import matplotlib.pyplot as plt
 from numpy import right_shift
-import seaborn as sns
 import streamlit as st
-#from skimage import io
-import urllib3
 from PIL import Image
 import requests
 from io import BytesIO

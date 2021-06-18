@@ -1,11 +1,14 @@
 import streamlit as st
 import requests
-import json
 import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
+import time
+
+import matplotlib.pyplot as plt
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 
 from utils.formation import print_formation, getImage
@@ -108,6 +111,9 @@ with st.beta_expander('Input:',expanded=True):
 
     budget = st.number_input('')
 
+if st.checkbox("Use Pep's team"):
+    full_list = [n.lower() for n in TEST_LIST]
+
 st.markdown('___')
 
 st.markdown('''
@@ -116,8 +122,6 @@ st.markdown('''
 
 full_list = [n.lower() for n in full_list]
 
-if st.checkbox('Use default team'):
-    full_list = [n.lower() for n in TEST_LIST]
 
 params = {
     'team_list': full_list,
@@ -128,8 +132,7 @@ url = 'https://fflpred-d2yuhgnxba-ew.a.run.app/give_prediction'
 
 # Button to predict
 
-if  st.checkbox('Start the Predictions'): #st.form_submit_button(label='Submit'):
-    import time
+if  st.checkbox('Start the Predictions'):
 
     'AI computed predictions in progress...'
     headers={
@@ -141,11 +144,13 @@ if  st.checkbox('Start the Predictions'): #st.form_submit_button(label='Submit')
     # Add a placeholder
     latest_iteration = st.empty()
     bar = st.progress(0)
+    progress = 0
 
-    for i in range(100):
+    for _ in range(40):
         # Update the progress bar with each iteration.
-        latest_iteration.text(f'{i+1}%')
-        bar.progress(i + 1)
+        latest_iteration.text(f'{progress+1}%')
+        bar.progress(progress + 1)
+        progress += 1
         time.sleep(0.01)
 
     # Transfer players
@@ -157,7 +162,6 @@ if  st.checkbox('Start the Predictions'): #st.form_submit_button(label='Submit')
 
     best_11 = pd.DataFrame(
         response['best_11']).reset_index(drop=True)[['position', 'name']]
-    # st.write(best_11)
 
     positions = pd.DataFrame({
         'x': [155, 155, 155, 155, 25, 285],
@@ -165,9 +169,72 @@ if  st.checkbox('Start the Predictions'): #st.form_submit_button(label='Submit')
         'position': ['GK', 'DEF', 'MID', 'FWD', 'Left limit', 'right limit']
     })
 
-    #st.write(positions)
+    # Print pitch and formation
 
-    fig = print_formation(best_11)
+    #    fig = print_formation(best_11)
+
+    #if not fig_set:
+    left_limit = 25
+    right_limit = 285
+
+    best_11['y'] = best_11.position.map({'GK':60, 'DEF':140, 'MID':230, 'FWD':320})
+    best_11['x'] = 155
+    for position in ['DEF', 'MID', 'FWD']:
+        #st.write('hi')
+        position_x = []
+        position_count = len(best_11[best_11['position']==position])
+        if position_count>2:
+
+            for i in range(position_count):
+                position_x.append(left_limit+
+                                ((right_limit-left_limit)/
+                                (position_count-1)*i))
+            player = 0
+            for index, row in best_11[best_11['position'] == position].iterrows():
+                best_11.loc[index, ['x']] = position_x[player]
+                player += 1
+
+        elif position_count == 2:
+            position_x = [105,195]
+            player = 0
+            for index, row in best_11[best_11['position'] == position].iterrows():
+                best_11.loc[index, ['x']] = position_x[player]
+                player += 1
+        else:
+            index = best_11[best_11['position'] == position].index
+            best_11.loc[index,['x']] = 155
+
+    pitch = plt.imread('images/football_pitch.png')
+    fig, ax = plt.subplots()
+    plt.axis('off')
+    ax.imshow(pitch, extent=[0, 310, 0, 400])
+
+    ax.scatter(x = best_11.x, y = best_11.y, s = 1, c = 'green')
+
+    for _, row in best_11.iterrows():
+        ax.text(row['x'],
+                row['y']-50,
+                row['name'].replace(' ', '\n', 1).title(),
+                size=5,
+                ha = 'center')
+
+        player_url = get_picture(row['name'])
+
+        if not player_url == 'not found':
+            image = getImage(player_url)
+            ab = AnnotationBbox(image, (row['x'], row['y']), frameon=False, )
+            ax.add_artist(ab)
+        else:
+            image = OffsetImage(Image.open('images/default_avatar.png'),
+                                zoom=0.05)
+            ab = AnnotationBbox(image,(row['x'], row['y']),frameon=False,)
+            ax.add_artist(ab)
+
+        latest_iteration.text(f'{progress}%')
+        bar.progress(progress)
+        progress+=6
+    fig_set = True
+
     st.write(fig)
 
     # Captain and Vice Captain
